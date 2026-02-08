@@ -6,6 +6,23 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FiShoppingBag, FiMenu, FiX, FiSearch } from 'react-icons/fi';
 import { useCart } from '../cart/CartContext';
 
+const NavLink = ({ href, name, isActive }) => (
+  <Link href={href} className="relative text-sm font-medium transition-colors hover:text-rose-500 group py-1">
+    <span className={isActive ? 'text-rose-600' : 'text-stone-600'}>
+      {name}
+    </span>
+    {/* Animated underline */}
+    <motion.span
+      className="absolute bottom-0 left-0 h-0.5 bg-rose-500 rounded-full"
+      initial={false}
+      animate={{ width: isActive ? '100%' : '0%' }}
+      whileHover={{ width: '100%' }}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
+      style={{ originX: 0 }}
+    />
+  </Link>
+);
+
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -33,90 +50,125 @@ const Header = () => {
   ];
 
   return (
-    <header 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'glass py-3' : 'bg-transparent py-5'
+    <motion.header 
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.6, type: "spring", stiffness: 100, damping: 20 }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        scrolled ? 'glass py-3 shadow-lg shadow-rose-900/5' : 'bg-transparent py-5'
       }`}
     >
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="text-2xl font-bold tracking-tighter text-rose-950 flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full bg-rose-500"></span>
-            GlowUp
+          {/* Animated Logo */}
+          <Link href="/" className="text-2xl font-bold tracking-tighter text-rose-950 flex items-center gap-2 group">
+            <motion.span 
+              className="w-3 h-3 rounded-full bg-rose-500"
+              animate={{ scale: [1, 1.3, 1] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <motion.span
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 400 }}
+            >
+              GlowUp
+            </motion.span>
           </Link>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Navigation with animated underlines */}
           <nav className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <Link 
+              <NavLink 
                 key={link.name} 
                 href={link.href}
-                className={`text-sm font-medium transition-colors hover:text-rose-500 ${
-                  pathname === link.href ? 'text-rose-600' : 'text-stone-600'
-                }`}
-              >
-                {link.name}
-              </Link>
+                name={link.name}
+                isActive={pathname === link.href}
+              />
             ))}
           </nav>
 
-          {/* Icons */}
+          {/* Icons with hover animations */}
           <div className="flex items-center gap-4">
-            <Link href="/products" className="p-2 text-stone-600 hover:text-rose-600 transition-colors">
-              <FiSearch size={20} />
-            </Link>
+            <motion.div whileHover={{ scale: 1.15, rotate: 15 }} whileTap={{ scale: 0.9 }}>
+              <Link href="/products" className="p-2 text-stone-600 hover:text-rose-600 transition-colors block">
+                <FiSearch size={20} />
+              </Link>
+            </motion.div>
             
-            <Link href="/cart" className="relative p-2 text-stone-600 hover:text-rose-600 transition-colors group">
-              <FiShoppingBag size={20} />
-              {cartCount > 0 && (
-                <motion.span 
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  key={cartCount}
-                  className="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white"
-                >
-                  {cartCount}
-                </motion.span>
-              )}
-            </Link>
+            <motion.div whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.9 }}>
+              <Link href="/cart" className="relative p-2 text-stone-600 hover:text-rose-600 transition-colors block group">
+                <FiShoppingBag size={20} />
+                <AnimatePresence mode="wait">
+                  {cartCount > 0 && (
+                    <motion.span 
+                      initial={{ scale: 0, rotate: -180 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      exit={{ scale: 0, rotate: 180 }}
+                      key={cartCount}
+                      className="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white"
+                    >
+                      {cartCount}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </Link>
+            </motion.div>
 
-            <button 
+            <motion.button 
+              whileTap={{ scale: 0.9 }}
               className="md:hidden p-2 text-stone-600"
               onClick={() => setIsOpen(!isOpen)}
             >
-              {isOpen ? <FiX size={24} /> : <FiMenu size={24} />}
-            </button>
+              <AnimatePresence mode="wait">
+                {isOpen ? (
+                  <motion.div key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
+                    <FiX size={24} />
+                  </motion.div>
+                ) : (
+                  <motion.div key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
+                    <FiMenu size={24} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Enhanced Mobile Menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
+            initial={{ opacity: 0, height: 0, backdropFilter: 'blur(0px)' }}
+            animate={{ opacity: 1, height: 'auto', backdropFilter: 'blur(20px)' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-white border-t border-stone-100"
+            transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+            className="md:hidden bg-white/90 border-t border-white/40 overflow-hidden"
           >
-            <nav className="container mx-auto px-4 py-6 flex flex-col gap-4">
-              {navLinks.map((link) => (
-                <Link 
-                  key={link.name} 
-                  href={link.href}
-                  className={`text-lg font-medium ${
-                    pathname === link.href ? 'text-rose-600' : 'text-stone-600'
-                  }`}
+            <nav className="container mx-auto px-4 py-6 flex flex-col gap-1">
+              {navLinks.map((link, i) => (
+                <motion.div
+                  key={link.name}
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -30 }}
+                  transition={{ delay: i * 0.08, duration: 0.3 }}
                 >
-                  {link.name}
-                </Link>
+                  <Link 
+                    href={link.href}
+                    className={`block text-lg font-medium py-3 px-4 rounded-xl transition-all ${
+                      pathname === link.href ? 'text-rose-600 bg-rose-50' : 'text-stone-600 hover:bg-rose-50/50'
+                    }`}
+                  >
+                    {link.name}
+                  </Link>
+                </motion.div>
               ))}
             </nav>
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </motion.header>
   );
 };
 
