@@ -89,7 +89,7 @@ const Hero = () => {
       <motion.div 
         className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-80 mix-blend-overlay"
         style={{
-          backgroundImage: 'url("https://images.unsplash.com/photo-1556228720-19875949e24e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80")',
+          backgroundImage: 'url("https://images.unsplash.com/photo-1612817288484-6f916006741a?auto=format&fit=crop&w=1920&q=80")',
           y: bgY,
         }}
       >

@@ -2,6 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FiCheck } from 'react-icons/fi';
+import { FALLBACK_IMAGE } from '@/utils/sanitize';
 
 const listItemVariants = {
   hidden: { opacity: 0, x: -20 },
@@ -43,6 +44,7 @@ const CleanBeautySection = () => {
             src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
             alt="Skincare Routine" 
             className="w-full object-cover h-[500px]"
+            onError={(e) => { e.currentTarget.src = FALLBACK_IMAGE; }}
             whileHover={{ scale: 1.06 }}
             transition={{ duration: 0.6 }}
           />

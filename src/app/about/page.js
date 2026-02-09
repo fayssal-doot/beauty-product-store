@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { FiHeart, FiGlobe, FiSun } from 'react-icons/fi';
+import { FALLBACK_IMAGE } from '@/utils/sanitize';
 
 const containerVariants = {
   hidden: {},
@@ -88,6 +89,7 @@ export default function AboutPage() {
               src="https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
               alt="Curated Skincare Collection" 
               className="w-full h-full object-cover"
+              onError={(e) => { e.currentTarget.src = FALLBACK_IMAGE; }}
               whileHover={{ scale: 1.08 }}
               transition={{ duration: 0.6 }}
             />

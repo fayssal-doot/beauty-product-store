@@ -5,6 +5,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import Link from 'next/link';
 import { FiArrowRight } from 'react-icons/fi';
+import { FALLBACK_IMAGE } from '@/utils/sanitize';
 
 const containerVariants = {
   hidden: {},
@@ -27,7 +28,7 @@ export default function JournalPage() {
       excerpt: "Confused about whether serum goes before or after oil? We break down the correct order of application for maximum absorption and results.",
       date: "October 12, 2023",
       category: "Skincare Tips",
-      image: "https://images.unsplash.com/photo-1556228729-166eb612c021?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      image: "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=800&q=80"
     },
     {
       id: 2,
@@ -88,9 +89,10 @@ export default function JournalPage() {
         >
           <div className="h-[400px] md:h-auto relative overflow-hidden">
              <motion.img 
-               src="https://images.unsplash.com/photo-1596462502278-27bfdd403348?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" 
+               src="https://images.unsplash.com/photo-1576426863848-c21f53c60b19?auto=format&fit=crop&w=1200&q=80" 
                alt="Featured Article" 
                className="w-full h-full object-cover"
+               onError={(e) => { e.currentTarget.src = FALLBACK_IMAGE; }}
                whileHover={{ scale: 1.08 }}
                transition={{ duration: 0.6 }}
              />
@@ -158,6 +160,7 @@ export default function JournalPage() {
                   src={post.image} 
                   alt={post.title} 
                   className="w-full h-full object-cover"
+                  onError={(e) => { e.currentTarget.src = FALLBACK_IMAGE; }}
                   whileHover={{ scale: 1.08 }}
                   transition={{ duration: 0.5 }}
                 />

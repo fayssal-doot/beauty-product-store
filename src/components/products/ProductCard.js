@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { FiStar, FiShoppingBag, FiEye } from 'react-icons/fi';
 import { useCart } from '../cart/CartContext';
+import { FALLBACK_IMAGE } from '@/utils/sanitize';
 
 const ProductCard = ({ product, index = 0 }) => {
   const { addToCart } = useCart();
@@ -52,6 +53,7 @@ const ProductCard = ({ product, index = 0 }) => {
           src={product.image} 
           alt={product.name} 
           className="w-full h-full object-cover"
+          onError={(e) => { e.currentTarget.src = FALLBACK_IMAGE; }}
           whileHover={{ scale: 1.12 }}
           transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
         />

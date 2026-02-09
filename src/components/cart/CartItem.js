@@ -3,6 +3,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiMinus, FiPlus, FiTrash2 } from 'react-icons/fi';
 import { useCart } from './CartContext';
+import { FALLBACK_IMAGE } from '@/utils/sanitize';
 
 const CartItem = ({ item }) => {
   const { updateQuantity, removeFromCart } = useCart();
@@ -20,7 +21,7 @@ const CartItem = ({ item }) => {
         whileHover={{ scale: 1.05 }}
         className="w-24 h-24 md:w-32 md:h-32 bg-stone-100 rounded-xl overflow-hidden flex-shrink-0 shadow-md"
       >
-        <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+        <img src={item.image} alt={item.name} className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = FALLBACK_IMAGE; }} />
       </motion.div>
       
       <div className="flex-1 flex flex-col">

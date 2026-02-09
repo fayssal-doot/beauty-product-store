@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiCheckCircle } from 'react-icons/fi';
 import { useCart } from '../cart/CartContext';
+import { sanitizeText, sanitizeEmail } from '@/utils/sanitize';
 import Link from 'next/link';
 
 const CheckoutForm = () => {
@@ -12,6 +13,18 @@ const CheckoutForm = () => {
   const { clearCart } = useCart();
 
   const onSubmit = (data) => {
+    // Sanitize all inputs before processing
+    const sanitized = {
+      email: sanitizeEmail(data.email),
+      fullName: sanitizeText(data.fullName, 100),
+      address: sanitizeText(data.address, 200),
+      city: sanitizeText(data.city, 100),
+      zip: sanitizeText(data.zip, 20),
+      cardNumber: data.cardNumber?.replace(/[^0-9\s]/g, '').slice(0, 19) || '',
+      expiry: data.expiry?.replace(/[^0-9/]/g, '').slice(0, 5) || '',
+      cvc: data.cvc?.replace(/[^0-9]/g, '').slice(0, 4) || '',
+    };
+    
     // Simulate processing
     setTimeout(() => {
       setIsSuccess(true);
@@ -48,7 +61,14 @@ const CheckoutForm = () => {
           <div>
             <label className="block text-sm font-medium text-stone-700 mb-1">Email Address</label>
             <input 
-              {...register("email", { required: "Email is required", pattern: { value: /^\S+@\S+$/i, message: "Invalid email" } })}
+              {...register("email", { 
+                required: "Email is required", 
+                maxLength: { value: 254, message: "Email is too long" },
+                pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, message: "Invalid email address" } 
+              })}
+              type="email"
+              maxLength={254}
+              autoComplete="email"
               className="w-full px-4 py-3 rounded-lg border border-stone-200 focus:border-rose-500 outline-none"
               placeholder="you@example.com"
             />
@@ -64,7 +84,13 @@ const CheckoutForm = () => {
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-stone-700 mb-1">Full Name</label>
             <input 
-              {...register("fullName", { required: "Full Name is required" })}
+              {...register("fullName", { 
+                required: "Full Name is required",
+                maxLength: { value: 100, message: "Name is too long" },
+                pattern: { value: /^[a-zA-Z\s\-'.]+$/, message: "Name contains invalid characters" }
+              })}
+              maxLength={100}
+              autoComplete="name"
               className="w-full px-4 py-3 rounded-lg border border-stone-200 focus:border-rose-500 outline-none"
             />
             {errors.fullName && <p className="text-red-500 text-xs mt-1">{errors.fullName.message}</p>}
@@ -72,7 +98,12 @@ const CheckoutForm = () => {
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-stone-700 mb-1">Address</label>
             <input 
-              {...register("address", { required: "Address is required" })}
+              {...register("address", { 
+                required: "Address is required",
+                maxLength: { value: 200, message: "Address is too long" }
+              })}
+              maxLength={200}
+              autoComplete="street-address"
               className="w-full px-4 py-3 rounded-lg border border-stone-200 focus:border-rose-500 outline-none"
             />
             {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address.message}</p>}
@@ -80,7 +111,13 @@ const CheckoutForm = () => {
           <div>
             <label className="block text-sm font-medium text-stone-700 mb-1">City</label>
             <input 
-              {...register("city", { required: "City is required" })}
+              {...register("city", { 
+                required: "City is required",
+                maxLength: { value: 100, message: "City name is too long" },
+                pattern: { value: /^[a-zA-Z\s\-'.]+$/, message: "City contains invalid characters" }
+              })}
+              maxLength={100}
+              autoComplete="address-level2"
               className="w-full px-4 py-3 rounded-lg border border-stone-200 focus:border-rose-500 outline-none"
             />
              {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city.message}</p>}
@@ -88,7 +125,13 @@ const CheckoutForm = () => {
           <div>
             <label className="block text-sm font-medium text-stone-700 mb-1">Postal Code</label>
             <input 
-              {...register("zip", { required: "Zip Code is required" })}
+              {...register("zip", { 
+                required: "Zip / Postal Code is required",
+                maxLength: { value: 20, message: "Postal code is too long" },
+                pattern: { value: /^[a-zA-Z0-9\s\-]+$/, message: "Invalid postal code format" }
+              })}
+              maxLength={20}
+              autoComplete="postal-code"
               className="w-full px-4 py-3 rounded-lg border border-stone-200 focus:border-rose-500 outline-none"
             />
              {errors.zip && <p className="text-red-500 text-xs mt-1">{errors.zip.message}</p>}
@@ -105,24 +148,48 @@ const CheckoutForm = () => {
         <div className="mt-4">
           <label className="block text-sm font-medium text-stone-700 mb-1">Card Number</label>
           <input 
+            {...register("cardNumber", { 
+              required: "Card number is required",
+              pattern: { value: /^[0-9\s]{13,19}$/, message: "Enter a valid card number" }
+            })}
             placeholder="0000 0000 0000 0000"
+            maxLength={19}
+            inputMode="numeric"
+            autoComplete="cc-number"
             className="w-full px-4 py-3 rounded-lg border border-stone-200 focus:border-rose-500 outline-none"
           />
+          {errors.cardNumber && <p className="text-red-500 text-xs mt-1">{errors.cardNumber.message}</p>}
         </div>
         <div className="grid grid-cols-2 gap-4 mt-4">
            <div>
              <label className="block text-sm font-medium text-stone-700 mb-1">Expiry</label>
              <input 
+               {...register("expiry", { 
+                 required: "Expiry date is required",
+                 pattern: { value: /^(0[1-9]|1[0-2])\/[0-9]{2}$/, message: "Use MM/YY format" }
+               })}
                placeholder="MM/YY"
+               maxLength={5}
+               inputMode="numeric"
+               autoComplete="cc-exp"
                className="w-full px-4 py-3 rounded-lg border border-stone-200 focus:border-rose-500 outline-none"
              />
+             {errors.expiry && <p className="text-red-500 text-xs mt-1">{errors.expiry.message}</p>}
            </div>
            <div>
              <label className="block text-sm font-medium text-stone-700 mb-1">CVC</label>
              <input 
+               {...register("cvc", { 
+                 required: "CVC is required",
+                 pattern: { value: /^[0-9]{3,4}$/, message: "Enter a valid 3 or 4 digit CVC" }
+               })}
                placeholder="123"
+               maxLength={4}
+               inputMode="numeric"
+               autoComplete="cc-csc"
                className="w-full px-4 py-3 rounded-lg border border-stone-200 focus:border-rose-500 outline-none"
              />
+             {errors.cvc && <p className="text-red-500 text-xs mt-1">{errors.cvc.message}</p>}
            </div>
         </div>
       </section>

@@ -1,5 +1,8 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { validateCart, clampQuantity } from '@/utils/sanitize';
+
+const MAX_QUANTITY = 99;
 
 const CartContext = createContext();
 
@@ -12,9 +15,11 @@ export const CartProvider = ({ children }) => {
     const savedCart = localStorage.getItem('glowup-cart');
     if (savedCart) {
       try {
-        setCart(JSON.parse(savedCart));
+        const parsed = JSON.parse(savedCart);
+        setCart(validateCart(parsed));
       } catch (e) {
         console.error("Failed to parse cart from local storage", e);
+        localStorage.removeItem('glowup-cart');
       }
     }
     setIsLoaded(true);
@@ -28,16 +33,18 @@ export const CartProvider = ({ children }) => {
   }, [cart, isLoaded]);
 
   const addToCart = (product, quantity = 1) => {
+    const safeQty = clampQuantity(quantity, 1, MAX_QUANTITY);
     setCart(prevCart => {
       const existingItem = prevCart.find(item => item.id === product.id);
       if (existingItem) {
+        const newQty = clampQuantity(existingItem.quantity + safeQty, 1, MAX_QUANTITY);
         return prevCart.map(item =>
           item.id === product.id
-            ? { ...item, quantity: item.quantity + quantity }
+            ? { ...item, quantity: newQty }
             : item
         );
       }
-      return [...prevCart, { ...product, quantity }];
+      return [...prevCart, { ...product, quantity: safeQty }];
     });
   };
 
@@ -46,10 +53,11 @@ export const CartProvider = ({ children }) => {
   };
 
   const updateQuantity = (productId, quantity) => {
-    if (quantity < 1) return;
+    const safeQty = clampQuantity(quantity, 1, MAX_QUANTITY);
+    if (safeQty < 1) return;
     setCart(prevCart =>
       prevCart.map(item =>
-        item.id === productId ? { ...item, quantity } : item
+        item.id === productId ? { ...item, quantity: safeQty } : item
       )
     );
   };

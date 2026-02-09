@@ -3,6 +3,9 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiStar, FiMinus, FiPlus, FiShoppingBag, FiCheck, FiHeart } from 'react-icons/fi';
 import { useCart } from '../cart/CartContext';
+import { FALLBACK_IMAGE, clampQuantity } from '@/utils/sanitize';
+
+const MAX_QTY = 99;
 
 const tabContent = {
   hidden: { opacity: 0, y: 20, filter: 'blur(4px)' },
@@ -42,6 +45,7 @@ const ProductDetail = ({ product }) => {
             src={product.image} 
             alt={product.name} 
             className="w-full h-full object-cover"
+            onError={(e) => { e.currentTarget.src = FALLBACK_IMAGE; }}
             animate={{ scale: imgHover ? 1.15 : 1 }}
             transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
           />
@@ -145,7 +149,7 @@ const ProductDetail = ({ product }) => {
                 </motion.span>
               </AnimatePresence>
               <motion.button 
-                onClick={() => setQuantity(quantity + 1)}
+                onClick={() => setQuantity(clampQuantity(quantity + 1, 1, MAX_QTY))}
                 whileTap={{ scale: 0.85 }}
                 className="p-4 hover:text-rose-600 transition-colors"
               >

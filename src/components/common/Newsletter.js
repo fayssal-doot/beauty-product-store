@@ -133,6 +133,8 @@ const Newsletter = () => {
                     })}
                     whileFocus={{ scale: 1.02, boxShadow: "0 0 0 3px rgba(244,63,94,0.2)" }}
                     className="w-full px-6 py-4 rounded-full text-stone-800 focus:outline-none focus:ring-2 focus:ring-rose-300 transition-shadow bg-white/90 backdrop-blur-sm"
+                    maxLength={254}
+                    autoComplete="email"
                   />
                   <AnimatePresence>
                     {errors.email && (

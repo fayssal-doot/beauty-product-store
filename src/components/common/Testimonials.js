@@ -3,6 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { FiStar } from 'react-icons/fi';
 import { testimonials } from '@/data/products';
+import { FALLBACK_IMAGE } from '@/utils/sanitize';
 
 const containerVariants = {
   hidden: {},
@@ -76,6 +77,7 @@ const Testimonials = () => {
                   src={testimonial.image} 
                   alt={testimonial.name} 
                   className="w-12 h-12 rounded-full object-cover border-2 border-rose-100"
+                  onError={(e) => { e.currentTarget.src = FALLBACK_IMAGE; }}
                   whileHover={{ scale: 1.15 }}
                 />
                 <div>

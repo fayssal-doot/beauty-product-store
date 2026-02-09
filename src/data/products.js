@@ -50,7 +50,7 @@ export const products = [
     name: "Gentle Rosewater Cleanser",
     price: 24.99,
     description: "A soothing, low-pH gel cleanser infused with organic rosewater to remove impurities without stripping the skin's natural moisture barrier.",
-    image: "https://images.unsplash.com/photo-1580870090592-34f37803a647?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1556229010-6c3f2c9ca5f8?auto=format&fit=crop&w=800&q=80",
     category: "Cleansers",
     sku: "SKIN003",
     rating: 4.9,
