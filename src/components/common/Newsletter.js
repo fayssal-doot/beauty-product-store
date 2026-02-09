@@ -4,6 +4,18 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { FiCheck, FiSend } from 'react-icons/fi';
 
+// Pre-computed deterministic dot data to avoid hydration mismatch
+const NEWSLETTER_DOTS = [
+  { size: 4, x: 10, duration: 9 },
+  { size: 7, x: 25, duration: 11 },
+  { size: 5, x: 40, duration: 8 },
+  { size: 8, x: 55, duration: 13 },
+  { size: 3, x: 65, duration: 10 },
+  { size: 6, x: 78, duration: 12 },
+  { size: 5, x: 88, duration: 9 },
+  { size: 7, x: 50, duration: 11 },
+];
+
 const FloatingDot = ({ delay, size, x, duration }) => (
   <motion.div
     className="absolute rounded-full bg-rose-300/30"
@@ -35,13 +47,13 @@ const Newsletter = () => {
       <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
       
       {/* Floating particles */}
-      {[...Array(8)].map((_, i) => (
+      {NEWSLETTER_DOTS.map((d, i) => (
         <FloatingDot
           key={i}
           delay={i * 2}
-          size={Math.random() * 6 + 3}
-          x={Math.random() * 100}
-          duration={Math.random() * 5 + 8}
+          size={d.size}
+          x={d.x}
+          duration={d.duration}
         />
       ))}
 

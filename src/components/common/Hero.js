@@ -37,13 +37,29 @@ const AnimatedText = ({ text, className }) => (
   </span>
 );
 
-const FloatingParticle = ({ delay, size, left, duration }) => (
+// Pre-computed deterministic particle data to avoid hydration mismatch
+const HERO_PARTICLES = [
+  { size: 7, left: 5, duration: 10, xDrift: 30 },
+  { size: 5, left: 15, duration: 12, xDrift: -20 },
+  { size: 9, left: 25, duration: 9, xDrift: 45 },
+  { size: 4, left: 35, duration: 11, xDrift: -35 },
+  { size: 8, left: 45, duration: 13, xDrift: 25 },
+  { size: 6, left: 55, duration: 8, xDrift: -40 },
+  { size: 10, left: 65, duration: 10, xDrift: 15 },
+  { size: 5, left: 75, duration: 14, xDrift: -25 },
+  { size: 7, left: 82, duration: 9, xDrift: 35 },
+  { size: 11, left: 90, duration: 12, xDrift: -15 },
+  { size: 6, left: 50, duration: 11, xDrift: 20 },
+  { size: 8, left: 70, duration: 10, xDrift: -30 },
+];
+
+const FloatingParticle = ({ delay, size, left, duration, xDrift }) => (
   <motion.div
     className="absolute rounded-full bg-rose-300/40"
     style={{ width: size, height: size, left: `${left}%`, bottom: '-10%' }}
     animate={{
       y: [0, -800],
-      x: [0, Math.random() * 100 - 50],
+      x: [0, xDrift],
       opacity: [0, 1, 1, 0],
       scale: [0, 1, 1, 0],
     }}
@@ -81,13 +97,14 @@ const Hero = () => {
       </motion.div>
 
       {/* Floating Particles */}
-      {[...Array(12)].map((_, i) => (
+      {HERO_PARTICLES.map((p, i) => (
         <FloatingParticle
           key={i}
           delay={i * 1.5}
-          size={Math.random() * 8 + 4}
-          left={Math.random() * 100}
-          duration={Math.random() * 6 + 8}
+          size={p.size}
+          left={p.left}
+          duration={p.duration}
+          xDrift={p.xDrift}
         />
       ))}
 
